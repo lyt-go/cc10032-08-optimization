@@ -59,3 +59,39 @@ export async function loadOverview(): Promise<OverviewResult> {
   if (!response.ok) throw new Error('运营概览读取失败')
   return await response.json()
 }
+
+export type RecoveryManifestResponse = {
+  ok: boolean
+  total?: number
+  records?: Record<string, unknown>[]
+  events?: Record<string, unknown>[]
+}
+
+export async function getRecoveryManifest(): Promise<RecoveryManifestResponse> {
+  const response = await request('/api/backfill_job/recovery/manifest')
+  if (!response.ok) throw new Error('恢复清单读取失败')
+  return await response.json()
+}
+
+export type RecoveryActionResult = {
+  ok: boolean
+  message?: string
+  reason?: string
+  [key: string]: unknown
+}
+
+export async function recoverBackfill(jobId: string): Promise<RecoveryActionResult> {
+  const response = await request('/api/backfill_job/recovery/recover', {
+    method: 'POST',
+    body: JSON.stringify({ job_id: jobId }),
+  })
+  return await response.json()
+}
+
+export async function revokeRecoveryWindow(jobId: string, windowId: string): Promise<RecoveryActionResult> {
+  const response = await request('/api/backfill_job/recovery/revoke', {
+    method: 'POST',
+    body: JSON.stringify({ job_id: jobId, window_id: windowId }),
+  })
+  return await response.json()
+}

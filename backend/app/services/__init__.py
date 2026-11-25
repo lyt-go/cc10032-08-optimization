@@ -42,6 +42,10 @@ SERVICES: dict[str, BaseModuleService] = {
     "table_format": TableFormatService(),
 }
 
+# 语义别名：恢复能力由 backfill_job 领域服务统一承载。
+SERVICES["backfill_recovery"] = SERVICES["backfill_job"]
+SERVICES["recovery_manifest"] = SERVICES["backfill_job"]
+
 
 def service_for(module: str) -> BaseModuleService | None:
     return SERVICES.get(module)
